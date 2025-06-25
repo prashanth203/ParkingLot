@@ -40,17 +40,19 @@ public class ParkingController {
         return ResponseEntity.ok("Vehicle parked successfully");
     }
 
-    @DeleteMapping ("/removeVehicle")
-    public ResponseEntity<String> removeVehicle(@RequestParam String vehicleId,
+    @DeleteMapping ("/unPark")
+    public ResponseEntity<String> unParkVehicle(@RequestParam String vehicleId,
                                                 @RequestParam String parkingLotName) {
-        parkingService.removeVehicle(vehicleId, parkingLotName);
-//      vehicleRepository.save(vehicle);
-        return ResponseEntity.ok("Vehicle removed successfully");
+        String unpark_message=parkingService.unParkVehicle(vehicleId, parkingLotName);
+        //      vehicleRepository.save(vehicle);
+        return ResponseEntity.ok(unpark_message);
     }
+
 
     @GetMapping("/open-spots")
     public ResponseEntity<List<ParkingSpot>> getOpenSpots(@RequestParam String parkingLotName, @RequestParam boolean occupiedSpot) {
         List<ParkingSpot> openSpots = parkingService.getOpenSpots(parkingLotName, occupiedSpot);
         return ResponseEntity.ok(openSpots);
     }
+
 }
