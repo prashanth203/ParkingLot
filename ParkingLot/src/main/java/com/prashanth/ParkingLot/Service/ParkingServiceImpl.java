@@ -8,6 +8,8 @@ import com.prashanth.ParkingLot.Model.VehicleType;
 import com.prashanth.ParkingLot.Repository.ParkingLotRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class ParkingServiceImpl implements ParkingService{
         if (parkingLot != null) {
             ParkingSpot spot = findAvailableSpot(parkingLot, vehicle.getType());
             if (spot != null) {
+                spot.setParkedTime(LocalDateTime.now());
                 spot.setParkedVehicle(vehicle);
                 parkingLotRepository.save(parkingLot);
                 System.out.println("Vehicle with ID "+vehicle.getId()+" parked at spot "+spot.getSpotId());
@@ -58,15 +61,23 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public void removeVehicle(String vehicleId, String parkingLotName){
+    public String unParkVehicle(String vehicleId, String parkingLotName){
         ParkingLot parkingLot = parkingLotRepository.findByName(parkingLotName);
         if (parkingLot != null) {
             ParkingSpot parkingSpot = findSpotByVahicleId(vehicleId,parkingLot);
             if (parkingSpot != null) {
+                Duration total_parked_time= Duration.between(parkingSpot.getParkedTime(),LocalDateTime.now());
+                long parking_time=total_parked_time.toSeconds();
                 parkingSpot.setParkedVehicle(null);
+                parkingSpot.setParkedTime(null);
+                parkingSpot.setUnParkedTime(null);
                 parkingLotRepository.save(parkingLot);
+                return "Unparking successful, please play the parking cost of "+"("+String.valueOf(parking_time*5)+") Rs.";
             }
+            return "spot is already empty, no vehicle parked there!!";
         }
+        return "There is no parking lot of !!"+"("+parkingLotName+").";
+
     }
 
     private ParkingSpot findSpotByVahicleId(String vehicleId, ParkingLot parkingLot) {
