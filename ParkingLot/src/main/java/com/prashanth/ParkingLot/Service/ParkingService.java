@@ -11,7 +11,7 @@ public interface ParkingService {
 
     void parkVehicle(Vehicle vehicle, String parkingLotName);
 
-    void removeVehicle(String vehicleId, String parkingLotName);
+    String unParkVehicle(String vehicleId, String parkingLotName);
 
     ParkingSpot findSpotById(String spotId, String parkingLotName);
 
